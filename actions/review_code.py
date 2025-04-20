@@ -1,10 +1,9 @@
-from .base import Action
-from providers import LLMProvider
-from repository.code_request import CodeRequest
+from providers import LLMProvider, stringify_code_changes, stringify_rules
+from repository import CodeRequest
 from colorama import Fore, Style
 from rules import Rule
-from repository.base import Repository
-from actions.base import ActionResult
+from repository import Repository
+from .base import Action, ActionResult
 from typing import List
 
 PROMPT = """Review the following code changes according to these rules:
@@ -12,22 +11,27 @@ PROMPT = """Review the following code changes according to these rules:
 Rules:
 {rules_text}
 
-Title: {cr.title}
-
-Description:
-{cr.description}
-
 Changes:
-{cr.changes}
+{changes_text}
 
-Please review the code changes and provide feedback on:
-1. Code quality and maintainability
-2. Potential bugs or issues
-3. Performance considerations
-4. Security concerns
-5. Any other relevant aspects
+The lines that were added are marked with a + and the lines that were removed are marked with a -.
 
-Return your review in a clear and structured format."""
+Review only the lines that were added and check if the rules are followed.
+
+For every rule not followed, provide a clear and structured explanation of why it was not followed as well as the file and line number when that happened.
+
+Return your review in a clear and structured JSON format.
+
+```json
+[
+    {{
+        "file": "src/index.js",
+        "line": 10,
+        "reason": "The function is not following the rule 'Avoid code duplication'"
+    }}
+]
+```
+"""
 
 
 class ReviewCodeAction(Action):
@@ -41,10 +45,15 @@ class ReviewCodeAction(Action):
         super().__init__(provider, repository, rules, verbose)
 
     def run(self, cr: CodeRequest, post: bool = False) -> ActionResult:
-        # rules_by_glob = Set()
+        selected_rules = []
+        for rule in self.rules:
+            if rule.filename.startswith("format."):
+                continue
+            selected_rules.append(rule)
 
-        rules_text = "\n".join(f"- {rule.content}" for rule in self.rules)
-        prompt = PROMPT.format(rules_text=rules_text, cr=cr)
+        rules_text = stringify_rules(selected_rules)
+        changes_text = stringify_code_changes(cr.changes)
+        prompt = PROMPT.format(rules_text=rules_text, cr=cr, changes_text=changes_text)
 
         if self.verbose:
             print(f"\n{Fore.GREEN}Prompt sent to LLM:{Style.RESET_ALL}")

@@ -3,7 +3,7 @@ from .openai import OpenAIProvider
 from .anthropic import AnthropicProvider
 from .google import GoogleProvider
 from .bedrock import BedrockProvider
-from .helpers import parse_json
+from .helpers import parse_json, stringify_code_changes, stringify_rules
 
 __all__ = [
     "LLMProvider",
@@ -13,4 +13,6 @@ __all__ = [
     "GoogleProvider",
     "BedrockProvider",
     "parse_json",
+    "stringify_code_changes",
+    "stringify_rules",
 ]

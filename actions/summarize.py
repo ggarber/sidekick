@@ -1,5 +1,6 @@
 from .base import Action
-from providers import LLMProvider, CompletionResponse
+from providers import LLMProvider
+from providers.helpers import stringify_code_changes
 from repository.code_request import CodeRequest
 from colorama import Fore, Style
 from rules import Rule
@@ -19,7 +20,7 @@ Description:
 {pr.description}
 
 Changes:
-{pr.changes}
+{changes_text}
 
 Please provide a concise summary that:
 1. Captures the main purpose of the changes
@@ -50,7 +51,8 @@ class SummarizeAction(Action):
 
     def run(self, pr: CodeRequest, post: bool = False) -> ActionResult:
         rules_text = "\n".join(f"- {rule.content}" for rule in self.rules)
-        prompt = PROMPT.format(rules_text=rules_text, pr=pr)
+        changes_text = stringify_code_changes(pr.changes)
+        prompt = PROMPT.format(rules_text=rules_text, pr=pr, changes_text=changes_text)
 
         if self.verbose:
             print(f"\n{Fore.GREEN}Prompt sent to LLM:{Style.RESET_ALL}")

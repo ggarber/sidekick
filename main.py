@@ -130,18 +130,13 @@ def main() -> None:
 
         rules = load_rules(args.rules)
 
-        if args.rules:
-            source_type = "file" if os.path.isfile(args.rules) else "directory"
-            print(
-                f"{Fore.WHITE}Loaded {len(rules)} rules from {source_type} {args.rules}{Style.RESET_ALL}"
-            )
-        else:
-            print(
-                f"{Fore.WHITE}Loaded {len(rules)} rules from default locations{Style.RESET_ALL}"
-            )
+        print(
+            f"{Fore.WHITE}Loaded {len(rules)} rules from {'rules'if args.rules else 'default'} locations{Style.RESET_ALL}"
+        )
 
         provider = get_provider()
 
+        total_tokens_used = 0
         # Run each action
         for action_name in action_names:
             print(f"\n{Fore.WHITE}Running action: {action_name}{Style.RESET_ALL}")
@@ -149,11 +144,14 @@ def main() -> None:
             action = get_action(action_name, provider, repository, rules, args.verbose)
             result = action.run(code_request, args.post)
 
+            total_tokens_used += result.tokens_used
+
             if args.verbose:
                 print(f"\n{Fore.WHITE}Action {action_name} completed{Style.RESET_ALL}")
-                print(
-                    f"{Fore.YELLOW}Total tokens used: {result.tokens_used}{Style.RESET_ALL}"
-                )
+
+        print(
+            f"{Fore.WHITE}Total tokens used: {total_tokens_used}{Style.RESET_ALL}"
+        )
 
     except ValueError as e:
         print(f"Error: {e}")

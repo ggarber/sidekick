@@ -25,3 +25,4 @@ class CodeRequest:
         self.project_id = project_id
         self.mr_id = mr_id
         self.base_branch = base_branch
+

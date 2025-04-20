@@ -1,9 +1,8 @@
 from .base import Action
-from providers import LLMProvider
-from repository.code_request import CodeRequest
+from providers import LLMProvider, stringify_code_changes
+from repository import CodeRequest, Repository
 from colorama import Fore, Style
 from rules import Rule
-from repository.base import Repository
 from actions.base import ActionResult
 from typing import List
 import os
@@ -21,7 +20,7 @@ Description:
 {pr.description}
 
 Changes:
-{pr.changes}
+{changes_text}
 
 Please suggest a list of labels that would be appropriate for this pull request.
 {label_instructions}
@@ -52,6 +51,7 @@ class LabelAction(Action):
 
     def run(self, pr: CodeRequest, post: bool = False) -> ActionResult:
         rules_text = "\n".join(f"- {rule.content}" for rule in self.rules)
+        changes_text = stringify_code_changes(pr.changes)
 
         # Choose instructions based on whether custom labels are provided
         if CUSTOM_LABELS:
@@ -60,7 +60,7 @@ class LabelAction(Action):
             label_instructions = DEFAULT_INSTRUCTIONS
 
         prompt = PROMPT.format(
-            rules_text=rules_text, pr=pr, label_instructions=label_instructions
+            rules_text=rules_text, pr=pr, changes_text=changes_text, label_instructions=label_instructions
         )
 
         if self.verbose:

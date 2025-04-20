@@ -1,0 +1,14 @@
+.git/
+.gitignore
+.env
+.env.*
+.cursor/
+.sidekick/
+.vscode/
+.idea/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so 

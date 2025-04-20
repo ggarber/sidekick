@@ -1,11 +1,15 @@
-# Use Python 3.8 or later as specified in pyproject.toml
-FROM python:3.8-slim
+# Update base image to Python 3.11
+FROM python:3.11-slim
 
 # Set working directory
 WORKDIR /app
 
-# Copy project files
-COPY . .
+# Copy only the necessary files
+COPY pyproject.toml ./
+COPY actions/ ./actions/
+COPY providers/ ./providers/
+COPY repository/ ./repository/
+COPY main.py rules.py ./
 
 # Install pip and build dependencies
 RUN pip install --no-cache-dir pip setuptools wheel

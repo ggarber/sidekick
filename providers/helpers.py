@@ -1,6 +1,8 @@
 import json5
 import re
-from typing import Any, Optional
+from typing import Any, Optional, List
+from repository import CodeChange
+from rules import Rule
 
 
 def parse_json(text: str) -> Optional[Any]:
@@ -17,3 +19,9 @@ def parse_json(text: str) -> Optional[Any]:
         raise Exception("No json object found")
 
     return json5.loads(match.group(0), strict=False)
+
+def stringify_code_changes(changes: List[CodeChange]) -> str:
+    return "\n".join([f"{change.path}\n{change.diff}" for change in changes])
+
+def stringify_rules(rules: List[Rule]) -> str:
+    return "\n".join([f"{rule.content}" for rule in rules])
