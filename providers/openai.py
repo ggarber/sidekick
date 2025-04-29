@@ -32,5 +32,4 @@ class OpenAIProvider(LLMProvider):
 
     @property
     def max_tokens(self) -> int:
-        # GPT-4 supports up to 128K tokens
-        return 128000
+        return self.get_context_window()

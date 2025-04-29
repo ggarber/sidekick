@@ -102,6 +102,9 @@ def main() -> None:
     parser.add_argument(
         "-p", "--post", action="store_true", help="Post results to merge/pull request"
     )
+    parser.add_argument(
+        "-t", "--tag", action="store_true", help="Tag merge/pull request and avoid duplication"
+    )
     args = parser.parse_args()
 
     try:
@@ -149,9 +152,9 @@ def main() -> None:
             if args.verbose:
                 print(f"\n{Fore.WHITE}Action {action_name} completed{Style.RESET_ALL}")
 
-        print(
-            f"{Fore.WHITE}Total tokens used: {total_tokens_used}{Style.RESET_ALL}"
-        )
+        if args.tag:
+            repository.label_code_request(args.project_id, args.cr_id, ["sidekick"])
+        print(f"{Fore.WHITE}Total tokens used: {total_tokens_used}{Style.RESET_ALL}")
 
     except ValueError as e:
         print(f"Error: {e}")

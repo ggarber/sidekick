@@ -60,7 +60,10 @@ class LabelAction(Action):
             label_instructions = DEFAULT_INSTRUCTIONS
 
         prompt = PROMPT.format(
-            rules_text=rules_text, pr=pr, changes_text=changes_text, label_instructions=label_instructions
+            rules_text=rules_text,
+            pr=pr,
+            changes_text=changes_text,
+            label_instructions=label_instructions,
         )
 
         if self.verbose:
@@ -87,7 +90,7 @@ class LabelAction(Action):
             print(f"\n{Fore.WHITE}Posting labels as comment...{Style.RESET_ALL}")
             print(f"{Fore.WHITE}Labels: {labels}{Style.RESET_ALL}")
 
-        self.repository.label_merge_request(pr.project_id, pr.mr_id, labels)
+        self.repository.label_code_request(pr.project_id, pr.mr_id, labels)
 
         if self.verbose:
             print(f"{Fore.WHITE}Labels posted successfully{Style.RESET_ALL}")

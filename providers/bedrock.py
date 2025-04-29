@@ -21,17 +21,24 @@ class BedrockProvider(LLMProvider):
         ):
             raise ValueError("AWS credentials environment variables are not set")
         self.model = os.getenv(
-            "BEDROCK_MODEL", "anthropic.claude-3-sonnet-20240229-v1:0"
+            "BEDROCK_MODEL", "anthropic.claude-3-7-sonnet-20250219-v1:0"
         )
 
     def completion(self, prompt: str) -> CompletionResponse:
         response = self.client.invoke_model(
             modelId=self.model,
-            body={
-                "anthropic_version": "bedrock-2023-05-31",
-                "max_tokens": 4096,
-                "messages": [{"role": "user", "content": prompt}],
-            },
+            body=json.dumps(
+                {
+                    "anthropic_version": "bedrock-2023-05-31",
+                    "max_tokens": 120000,
+                    "messages": [
+                        {
+                            "role": "user",
+                            "content": [{"type": "text", "text": prompt}],
+                        }
+                    ],
+                }
+            ),
         )
 
         response_body = json.loads(response.get("body").read())
@@ -42,16 +49,7 @@ class BedrockProvider(LLMProvider):
             + response_body["usage"]["output_tokens"],
         )
 
-    def get_context_window(self) -> int:
-        context_windows = {
-            "anthropic.claude-3-opus-20240229-v1:0": 200000,
-            "anthropic.claude-3-sonnet-20240229-v1:0": 200000,
-            "anthropic.claude-3-haiku-20240307-v1:0": 200000,
-            "anthropic.claude-v2:1": 200000,
-            "anthropic.claude-v2": 100000,
-            "anthropic.claude-v1": 100000,
-            "amazon.titan-text-express-v1": 8000,
-            "meta.llama2-70b-chat-v1": 4096,
-            "meta.llama2-13b-chat-v1": 4096,
-        }
-        return context_windows.get(self.model, 200000)
+    @property
+    def max_tokens(self) -> int:
+        # Example: Maximum tokens for completion
+        return 120000

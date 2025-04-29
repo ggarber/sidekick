@@ -26,3 +26,6 @@ class GoogleProvider(LLMProvider):
             "gemini-1.0-pro": 32768,
         }
         return context_windows.get(self.model, 1000000)
+
+    def max_tokens(self) -> int:
+        return self.get_context_window()

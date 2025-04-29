@@ -3,10 +3,11 @@ from pydantic import BaseModel
 
 
 class CodeChange(BaseModel):
-    """Model representing a file change in a code request."""
-
     path: str
     diff: str
+    base_sha: str
+    start_sha: str
+    head_sha: str
 
 
 class CodeRequest:
@@ -25,4 +26,3 @@ class CodeRequest:
         self.project_id = project_id
         self.mr_id = mr_id
         self.base_branch = base_branch
-

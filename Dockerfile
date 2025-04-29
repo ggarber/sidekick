@@ -9,7 +9,7 @@ COPY pyproject.toml ./
 COPY actions/ ./actions/
 COPY providers/ ./providers/
 COPY repository/ ./repository/
-COPY main.py rules.py ./
+COPY *.py ./
 
 # Install pip and build dependencies
 RUN pip install --no-cache-dir pip setuptools wheel
@@ -17,5 +17,6 @@ RUN pip install --no-cache-dir pip setuptools wheel
 # Install the project and its dependencies
 RUN pip install --no-cache-dir .
 
-# Set the default command
-ENTRYPOINT ["python", "main.py"] 
+ENV PYTHONPATH=/app
+
+ENTRYPOINT ["python" "main.py"]

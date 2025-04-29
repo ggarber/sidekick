@@ -34,5 +34,4 @@ class AnthropicProvider(LLMProvider):
 
     @property
     def max_tokens(self) -> int:
-        # Claude supports up to 100K tokens
-        return 100000
+        return self.get_context_window()

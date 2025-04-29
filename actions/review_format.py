@@ -10,15 +10,16 @@ from repository import count_tokens, count_tokens_change
 
 PROMPT = """You are a senior software engineer. Review the structure and format of this change according to the following rules:
 
-Rules:
+=== Rules ===
 {rules_text}
 
-Title: {cr.title}
+=== Title ===
+{cr.title}
 
-Description:
+=== Description ===
 {cr.description}
 
-Changes:
+=== Changes ===
 {changes_text}
 
 For each of the rules defined above report:
@@ -120,7 +121,7 @@ class ReviewFormatAction(Action):
         comment = "# Code Review Results\n\n"
         failed = [result for result in results if result["result"] != "passed"]
 
-        comment += f"Rules passed: {len(failed)}/{len(results)}\n\n"
+        comment += f"Rules passed: {len(results)-len(failed)}/{len(results)}\n\n"
 
         for rule in results:
             if rule.get("result") != "passed":

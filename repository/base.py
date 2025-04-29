@@ -25,7 +25,14 @@ class Repository(ABC):
         pass
 
     @abstractmethod
-    def label_merge_request(
+    def post_code_request_discussion(
+        self, project_id: int, mr_id: int, comment: str
+    ) -> None:
+        """Post a discussion on a code request."""
+        pass
+
+    @abstractmethod
+    def label_code_request(
         self, project_id: int, mr_id: int, labels: List[str]
     ) -> None:
         """Label a merge request."""

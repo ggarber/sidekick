@@ -21,7 +21,7 @@ def parse_json(text: str) -> Optional[Any]:
     return json5.loads(match.group(0), strict=False)
 
 def stringify_code_changes(changes: List[CodeChange]) -> str:
-    return "\n".join([f"{change.path}\n{change.diff}" for change in changes])
+    return "\n".join([f"Change {i+1}:\n{change.path}\n{change.diff}" for i, change in enumerate(changes)])
 
 def stringify_rules(rules: List[Rule]) -> str:
     return "\n".join([f"{rule.content}" for rule in rules])
